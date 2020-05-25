@@ -25,7 +25,7 @@ function gui.create_button(player)
       {
         type = "sprite-button",
         name = gui.prefix .. "open",
-        sprite = "item/rocket-control-unit",
+        sprite = "qrcode-icon",
         style = mod_gui.button_style,
         tooltip = {"gui-silo-script.button-tooltip"}
       }
@@ -56,7 +56,7 @@ local function placeWhiteSpots(player, surface, size, pixel_size, fill)
   surface.set_tiles(tiles)
 end
 
-local function placeBlackSpots(player, surface, qr, pixel_size, ptile, fill)
+local function placeBlackSpots(player, surface, qr, pixel_size, black, white)
   local floor = math.floor
   local size = #qr * pixel_size
   local adjust = 0 - (size / 2) - pixel_size
@@ -69,18 +69,18 @@ local function placeBlackSpots(player, surface, qr, pixel_size, ptile, fill)
         local base_y = floor(adjust + (y * pixel_size))
         for i = 0, pixel_size - 1 do
           for j = 0, pixel_size - 1 do
-            if fill[2] then
-              local e = surface.find_entities_filtered({name = fill[2], position = {base_x + i + .5, base_y + j + .5}})
+            if white[2] then
+              local e = surface.find_entities_filtered({name = white[2], position = {base_x + i + .5, base_y + j + .5}})
               for _, ent in pairs(e) do
                 ent.destroy()
               end
             end
-            if ptile[1] then
-              table.insert(tiles, {name = ptile[1], position = {x = base_x + i, y = base_y + j}})
+            if black[1] then
+              table.insert(tiles, {name = black[1], position = {x = base_x + i, y = base_y + j}})
             end
-            if ptile[2] then
+            if black[2] then
               surface.create_entity(
-                {name = ptile[2], position = {x = base_x + i, y = base_y + j}, force = player.force}
+                {name = black[2], position = {x = base_x + i, y = base_y + j}, force = player.force}
               )
             end
           end
@@ -92,7 +92,7 @@ local function placeBlackSpots(player, surface, qr, pixel_size, ptile, fill)
   surface.set_tiles(tiles)
 end
 
-function gui.create_tile_from_qr(qr, player, pixel_size, fill, tile)
+function gui.create_tile_from_qr(qr, player, pixel_size, white, black)
   local size = #qr * pixel_size + (8 * pixel_size)
   local surface =
     game.create_surface(
@@ -105,8 +105,8 @@ function gui.create_tile_from_qr(qr, player, pixel_size, fill, tile)
   surface.always_day = true
 
   chunkSurface(surface, size)
-  placeWhiteSpots(player, surface, size, pixel_size, fill)
-  placeBlackSpots(player, surface, qr, pixel_size, tile, fill)
+  placeWhiteSpots(player, surface, size, pixel_size, white)
+  placeBlackSpots(player, surface, qr, pixel_size, black, white)
 
   local stack = player.cursor_stack
   local floor = math.floor
@@ -334,14 +334,14 @@ function gui.button_click(event)
   -- Check text
   local size = itable[gui.prefix .. "size"].selected_index
   local white = itable[gui.prefix .. "white"].elem_value or nil
-  local white_entitiy = itable[gui.prefix .. "white-entity"].elem_value or nil
+  local white_entity = itable[gui.prefix .. "white-entity"].elem_value or nil
   local black = itable[gui.prefix .. "black"].elem_value
   local black_entity = itable[gui.prefix .. "black-entity"].elem_value
 
   local success, res = qrcode(text)
   -- local success, res = qrcode(stack.export_stack(), nil, 2)
   if success then
-    gui.create_tile_from_qr(res, player, size, {white, white_entitiy}, {black, black_entity})
+    gui.create_tile_from_qr(res, player, size, {white, white_entity}, {black, black_entity})
     -- player.teleport({0, 0}, surf)
     flow.destroy()
   end

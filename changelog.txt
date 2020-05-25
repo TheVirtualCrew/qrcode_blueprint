@@ -3,3 +3,4 @@ Version: 0.1.1
 Date: 25-05-2020
   Changes:
     - Initial release
+    - We know.. only 1x1 entities do work properly. So be it
