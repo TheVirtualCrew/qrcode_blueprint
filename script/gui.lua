@@ -178,16 +178,16 @@ function gui.create_fields(player, frame)
     type = "label",
     name = gui.prefix .. "white_entities_label",
     caption = {"", {"gui.qrcode-white-entity"}, " :"},
+    tooltip = {"gui.qrcode-entity-tooltip"},
     style = "bold_label"
   }
   frame.add(
     {
       type = "choose-elem-button",
-      elem_type = "entity",
+      elem_type = "item",
       name = gui.prefix .. "white-entity",
       style = mod_gui.button_style,
-      entity = "stone-wall",
-      force = player.force
+      item = "stone-wall"
     }
   )
 
@@ -212,12 +212,13 @@ function gui.create_fields(player, frame)
     type = "label",
     name = gui.prefix .. "black_entities_label",
     caption = {"", {"gui.qrcode-black-entity"}, " :"},
+    tooltip = {"gui.qrcode-entity-tooltip"},
     style = "bold_label"
   }
   frame.add(
     {
       type = "choose-elem-button",
-      elem_type = "entity",
+      elem_type = "item",
       name = gui.prefix .. "black-entity",
       style = mod_gui.button_style
     }
